@@ -10,7 +10,6 @@ The architecture is designed for scalability, security, and fault tolerance by l
 - **Application Load Balancer (ALB)** for distributing traffic  
 - **Auto Scaling Group (ASG)** for elasticity  
 - **Security Groups** for access control  
-- **S3 Gateway Endpoint** for cost-efficient and secure S3 access  
 
 ---
 
@@ -24,11 +23,11 @@ The architecture is designed for scalability, security, and fault tolerance by l
 
 ### 1. **Virtual Private Cloud (VPC)**  
 - Custom VPC created to host all networking components.  
-- CIDR block defined (e.g., `10.0.0.0/16`).  
+- CIDR block defined (e.g., `192.168.0.0/16`).  
 - Provides logical isolation for resources.  
 
 ### 2. **Subnets**  
-- **Public Subnets**: Contain resources that need internet access (e.g., NAT Gateway, ALB).  
+- **Public Subnets**: Contain resources that need internet access (e.g., InternetGateway, ALB).  
 - **Private Subnets**: Host application servers (EC2 instances) that do not have direct internet exposure.  
 
 ### 3. **Internet Gateway (IGW)**  
@@ -54,11 +53,7 @@ The architecture is designed for scalability, security, and fault tolerance by l
 ### 8. **Security Groups**  
 - **ALB SG**: Allows inbound HTTP/HTTPS traffic from the internet.  
 - **EC2 SG**: Allows inbound traffic only from the ALB SG.  
-- **NAT Gateway SG**: Manages outbound access from private instances.  
-
-### 9. **S3 Gateway Endpoint**  
-- Allows private subnet resources to securely access **Amazon S3** without traversing the internet.  
-- Improves performance and reduces data transfer costs.  
+- **NAT Gateway SG**: Manages outbound access from private instances.   
 
 ---
 
@@ -66,8 +61,7 @@ The architecture is designed for scalability, security, and fault tolerance by l
 
 1. A user accesses the application via the **ALB** DNS name.  
 2. The ALB routes the request to EC2 instances inside **private subnets** (via Auto Scaling Group).  
-3. EC2 instances process the request and may:  
-   - Access **S3** directly via the **S3 Gateway Endpoint**.  
+3. EC2 instances process the request and may:    
    - Connect to the internet **outbound** via the **NAT Gateway** (for updates).  
 4. Responses are sent back to the ALB and then to the client.  
 
@@ -78,21 +72,19 @@ The architecture is designed for scalability, security, and fault tolerance by l
 - **High Availability**: Resources deployed across multiple Availability Zones.  
 - **Scalability**: Auto Scaling adjusts capacity based on load.  
 - **Security**: Private subnets prevent direct internet exposure.  
-- **Cost Optimization**: S3 Gateway Endpoint reduces NAT Gateway data transfer costs.  
 - **Performance**: Load balancing ensures efficient traffic distribution.  
 
 ---
 
 ## 📂 How to Replicate This Project  
 
-1. Create a **VPC** with CIDR block (e.g., `10.0.0.0/16`).  
+1. Create a **VPC** with CIDR block (e.g., `192.168.0.0/16`).  
 2. Create **public and private subnets** in multiple Availability Zones.  
 3. Attach an **Internet Gateway** to the VPC.  
 4. Deploy **NAT Gateways** in public subnets.  
 5. Launch an **Application Load Balancer** in public subnets.  
 6. Create an **Auto Scaling Group** with EC2 instances in private subnets.  
 7. Configure **Security Groups** for ALB, EC2, and NAT Gateway.  
-8. Create an **S3 Gateway Endpoint** for secure S3 access.  
 9. Test the setup by accessing the ALB DNS name.  
 
 ---
